@@ -10,8 +10,7 @@ interface HistoryComponent {
 
     fun interface Factory {
         operator fun invoke(
-            componentContext: ComponentContext,
-            horseRacingRepository: HorseRacingRepository
+            componentContext: ComponentContext
         ): HistoryComponent
     }
 
