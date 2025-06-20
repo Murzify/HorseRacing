@@ -12,6 +12,7 @@ hilt = "2.56.2"
 decompose = "3.3.0"
 ksp = "2.1.21-2.0.1"
 kotlinx-serialization = "1.8.1"
+room = "2.7.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,6 +39,11 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 # Decompose
 decompose = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
 decompose-compose = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
+
+# Room
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
