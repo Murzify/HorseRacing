@@ -5,6 +5,7 @@ import com.murzify.horseracing.components.race.api.RaceComponent
 import com.murzify.horseracing.components.race.api.RaceComponent.Model
 import com.murzify.horseracing.components.race.api.RaceComponent.RaceState
 import com.murzify.horseracing.core.common.componentCoroutineScope
+import com.murzify.horseracing.core.data.api.HorseRacingRepository
 import com.murzify.horseracing.core.domain.model.RaceResult
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -19,7 +20,7 @@ import kotlin.random.Random
 
 class DefaultRaceComponent @AssistedInject constructor(
     @Assisted val componentContext: ComponentContext,
-//    val horseRacingRepository: HorseRacingRepository
+    val horseRacingRepository: HorseRacingRepository
 ) : ComponentContext by componentContext, RaceComponent {
     private val scope = componentCoroutineScope()
 
@@ -61,7 +62,7 @@ class DefaultRaceComponent @AssistedInject constructor(
             )
             model.update { it.copy(raceResult = result, raceState = RaceState.FINISHED) }
 
-//            horseRacingRepository.saveResult(result)
+            horseRacingRepository.saveResult(result)
             println(model.value)
         }
     }
