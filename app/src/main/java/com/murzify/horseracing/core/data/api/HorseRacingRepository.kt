@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface HorseRacingRepository {
 
-    fun getHistory(): Flow<List<RaceResult>>
+    suspend fun getHistory(): Flow<List<RaceResult>>
 
-    fun saveResult(raceResult: RaceResult)
+    suspend fun saveResult(raceResult: RaceResult)
 }
