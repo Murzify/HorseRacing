@@ -1,7 +1,6 @@
 package com.murzify.horseracing.components.race.api
 
 import com.arkivanov.decompose.ComponentContext
-import com.murzify.horseracing.core.data.api.HorseRacingRepository
 import com.murzify.horseracing.core.domain.model.RaceResult
 import kotlinx.coroutines.flow.StateFlow
 
@@ -18,7 +17,7 @@ interface RaceComponent {
 
     data class Model(
         val raceResult: RaceResult?,
-        val horsesDuration: List<Long>,
+        val horsesDuration: List<Int>,
         val raceState: RaceState
     )
 

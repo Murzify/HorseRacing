@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Horse Racing</string>
+
+    <string name="horse_racing">Лошадиные скачки</string>
+    <string name="winner">🏁 Лошадь №%1$d победила!</string>
 </resources>
