@@ -17,7 +17,7 @@ interface RaceComponent {
 
     data class Model(
         val raceResult: RaceResult?,
-        val horsesDuration: List<Int>,
+        val horsePositions: List<Float>,
         val raceState: RaceState
     )
 
@@ -25,5 +25,9 @@ interface RaceComponent {
         NOT_STARTED,
         STARTED,
         FINISHED
+    }
+
+    companion object {
+        const val HORSE_COUNT = 4
     }
 }

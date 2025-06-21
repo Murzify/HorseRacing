@@ -2,6 +2,7 @@ package com.murzify.horseracing.components.race.impl
 
 import com.arkivanov.decompose.ComponentContext
 import com.murzify.horseracing.components.race.api.RaceComponent
+import com.murzify.horseracing.components.race.api.RaceComponent.Companion.HORSE_COUNT
 import com.murzify.horseracing.components.race.api.RaceComponent.Model
 import com.murzify.horseracing.components.race.api.RaceComponent.RaceState
 import com.murzify.horseracing.core.common.componentCoroutineScope
@@ -15,7 +16,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
+import kotlin.math.min
 import kotlin.random.Random
 
 class DefaultRaceComponent @AssistedInject constructor(
@@ -27,7 +30,7 @@ class DefaultRaceComponent @AssistedInject constructor(
     override val model = MutableStateFlow(
         Model(
             raceResult = null,
-            horsesDuration = List(4) { 0 },
+            horsePositions = List(HORSE_COUNT) { 0f },
             raceState = RaceState.NOT_STARTED
         )
     )
@@ -40,30 +43,49 @@ class DefaultRaceComponent @AssistedInject constructor(
     }
 
     override fun onStartClicked() {
-        scope.launch(Dispatchers.IO) {
+        scope.launch {
             model.update { Model(
                 raceResult = null,
-                horsesDuration = List(4) { 0 },
+                horsePositions = List(HORSE_COUNT) { 0f },
                 raceState = RaceState.NOT_STARTED
             ) }
 
-            val durations = List(4) { Random.nextInt(3000, 6000) }
-            val winnerIndex = durations.withIndex().minBy { it.value }.index
-            model.update { it.copy(horsesDuration = durations, raceState = RaceState.STARTED) }
+            model.update { it.copy(raceState = RaceState.STARTED) }
 
-            val winnerDuration = durations.min()
-            delay(winnerDuration.toLong())
+            val result = simulateRace()
 
-            val result = RaceResult(
-                id = -1,
-                winner = winnerIndex + 1,
-                time = LocalDateTime.now(),
-                durationMillis = winnerDuration
-            )
             model.update { it.copy(raceResult = result, raceState = RaceState.FINISHED) }
 
-            horseRacingRepository.saveResult(result)
-            println(model.value)
+            withContext(Dispatchers.IO) {
+                horseRacingRepository.saveResult(result)
+            }
         }
+    }
+
+    private suspend fun simulateRace(): RaceResult {
+        val updateInterval = 16L
+        val startTime = System.currentTimeMillis()
+
+        val speedFactors = List(HORSE_COUNT) { Random.nextFloat() * 0.4f + 0.8f }
+
+        while (model.value.horsePositions.none { it >= 1f }) {
+            delay(updateInterval)
+            model.update {
+                val newPositions = it.horsePositions.mapIndexed { index, position ->
+                    val progress = Random.nextFloat() * 0.005f * speedFactors[index]
+                    min(1f, position + progress)
+                }
+                it.copy(horsePositions = newPositions)
+            }
+        }
+        val winnerIndex = model.value.horsePositions.indexOfFirst { it >= 1f }
+        val duration = System.currentTimeMillis() - startTime
+
+        return RaceResult(
+            id = -1,
+            winner = winnerIndex + 1,
+            time = LocalDateTime.now(),
+            durationMillis = duration.toInt()
+        )
     }
 }

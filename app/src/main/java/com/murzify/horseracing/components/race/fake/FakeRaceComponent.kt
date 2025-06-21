@@ -18,9 +18,9 @@ class FakeRaceComponent : RaceComponent {
                 id = -1,
                 winner = 3,
                 time = LocalDateTime.now(),
-                durationMillis = 3000
+                durationMillis = 6000
             ),
-            horsesDuration = listOf(3000, 5000, 4000, 6000),
+            horsePositions = listOf(0f, 0f, 0f, 0f),
             raceState = RaceComponent.RaceState.NOT_STARTED
         )
     )
@@ -28,7 +28,10 @@ class FakeRaceComponent : RaceComponent {
     override fun onStartClicked() {
         scope.launch {
             model.update { it.copy(raceState = RaceComponent.RaceState.NOT_STARTED) }
-            model.update { it.copy(raceState = RaceComponent.RaceState.STARTED) }
+            model.update { it.copy(
+                raceState = RaceComponent.RaceState.STARTED,
+                horsePositions = listOf(.7f, .8f, 1f, .5f),
+            ) }
             delay(model.value.raceResult!!.durationMillis.toLong())
             model.update { it.copy(raceState = RaceComponent.RaceState.FINISHED) }
         }

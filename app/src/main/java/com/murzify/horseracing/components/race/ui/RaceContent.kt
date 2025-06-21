@@ -1,7 +1,7 @@
 package com.murzify.horseracing.components.race.ui
 
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -55,10 +54,10 @@ fun RaceContent(component: RaceComponent) {
             && model.value.raceResult != null) {
             WinnerText(model.value.raceResult!!.winner)
         } else {
-            model.value.horsesDuration.forEachIndexed { index, duration ->
+            model.value.horsePositions.forEachIndexed { index, position ->
                 HorseLane(
                     index + 1,
-                    duration.toInt(),
+                    position,
                     model.value.raceState == RaceState.STARTED
                 )
             }
@@ -74,23 +73,15 @@ fun RaceContent(component: RaceComponent) {
 }
 
 @Composable
-private fun HorseLane(horseNumber: Int, durationMillis: Int, isRunning: Boolean) {
+private fun HorseLane(horseNumber: Int, position: Float, isRunning: Boolean) {
     val iconSize = 48.dp
     val iconWidthPx = with(LocalDensity.current) { iconSize.toPx() }
-    val horseOffset = remember { Animatable(0f) }
     var boxWidthPx by remember { mutableFloatStateOf(0f) }
-
-    LaunchedEffect(isRunning, boxWidthPx) {
-        if (isRunning && boxWidthPx > 0) {
-            horseOffset.snapTo(0f)
-            horseOffset.animateTo(
-                targetValue = boxWidthPx - iconWidthPx,
-                animationSpec = tween(durationMillis, easing = LinearEasing)
-            )
-        } else if (!isRunning) {
-            horseOffset.snapTo(0f)
-        }
-    }
+    val animatedOffset by animateFloatAsState(
+        targetValue = (boxWidthPx - iconWidthPx) * position,
+        animationSpec = tween(durationMillis = 100, easing = LinearEasing),
+        label = "horseOffset"
+    )
 
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -112,7 +103,7 @@ private fun HorseLane(horseNumber: Int, durationMillis: Int, isRunning: Boolean)
                 painter = painterResource(R.drawable.horse_racing),
                 contentDescription = "Horse $horseNumber",
                 modifier = Modifier
-                    .offset { IntOffset(horseOffset.value.roundToInt(), 0) }
+                    .offset { IntOffset(animatedOffset.roundToInt(), 0) }
                     .size(iconSize)
             )
         }
