@@ -10,7 +10,7 @@ import javax.inject.Inject
 class HorseRacingRepositoryImpl @Inject constructor(
     private val racingHistoryDao: RacingHistoryDao
 ) : HorseRacingRepository{
-    override suspend fun getHistory(): Flow<List<RaceResult>> = racingHistoryDao.loadAllHistory()
+    override fun getHistory(): Flow<List<RaceResult>> = racingHistoryDao.loadAllHistory()
         .map { it.toDomain() }
 
     override suspend fun saveResult(raceResult: RaceResult) {

@@ -3,4 +3,6 @@
 
     <string name="horse_racing">Лошадиные скачки</string>
     <string name="winner">🏁 Лошадь №%1$d победила!</string>
+    <string name="time">Время: %.1f сек.</string>
+    <string name="date">Дата: %s </string>
 </resources>
