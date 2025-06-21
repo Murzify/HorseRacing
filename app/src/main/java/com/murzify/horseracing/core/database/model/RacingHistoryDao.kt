@@ -11,6 +11,6 @@ interface RacingHistoryDao {
     @Insert
     fun insertResult(result: RaceResultDbo)
 
-    @Query("SELECT * FROM RacingHistory")
+    @Query("SELECT * FROM RacingHistory ORDER BY id DESC")
     fun loadAllHistory(): Flow<List<RaceResultDbo>>
 }
